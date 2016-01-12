@@ -10,7 +10,7 @@ request(URL, function (error, response, body) {
     return;
   }
 
-  var checksum = crc.crc32('hello').toString(16);
+  var checksum = crc.crc32(body).toString(16);
   var redis;
 
   if (process.env.REDISTOGO_URL) {
@@ -24,6 +24,7 @@ request(URL, function (error, response, body) {
 
   redis.get('crc', function(err, savedChecksum) {
     if (checksum === savedChecksum) {
+      redis.quit();
       return;
     }
 
@@ -46,6 +47,11 @@ request(URL, function (error, response, body) {
     var slack = new Slack(hookUrl);
     var message = 'New Angular 2 release: __' + release + '__';
 
+    console.log('sending...', {
+      text: message,
+      channel: '#' + channel,
+      username: username
+    });
     slack.send({
       text: message,
       channel: '#' + channel,
@@ -53,5 +59,6 @@ request(URL, function (error, response, body) {
     });
 
     redis.set('crc', checksum);
+    redis.quit();
   });
-}));
+});

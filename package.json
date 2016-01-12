@@ -9,9 +9,8 @@
   "author": "Felipe Coury",
   "license": "MIT",
   "dependencies": {
-    "node-slack": "0.0.7"
-  },
-  "devDependencies": {
+    "node-slack": "0.0.7",
+    "redis": "^2.4.2",
     "crc": "^3.4.0"
   }
 }
